@@ -1,0 +1,42 @@
+# instalacion apache + php
+apt update && sudo apt install -y apache2 php libapache2-mod-php
+
+# dependencias php
+apt install -y php-curl php-gd php-ldap php-mbstring smarty3 
+
+# agregar repos para el proyecto
+nano /etc/apt/sources.list.d/ltb-project.list
+--> deb [arch=amd64] https://ltb-project.org/debian/stable stable main
+
+# agregar llave para el repo
+wget -q --show-progress --progress=bar:force 2>&1 -O - https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project | sudo apt-key add -
+
+# actualizar los repos + instalacion de la app
+apt update && apt install -y self-service-password
+
+# configuracion de apache
+## backup de sitio 
+sudo cp /etc/apache2/sites-available/self-service-password.conf{,.bak}
+
+--> copiar archivo local con parametros
+
+# levantar sitio
+a2ensite self-service-password
+systemctl reload apache2.service
+
+# tener en cuenta configurar /etc/hosts + /etc/hostname en equipo local con parametros del servidor remoto para el acceso web
+
+# backup de configuracion de app .php
+cp /usr/share/self-service-password/conf/config.inc{,.local}.php
+
+# configurando archivo php
+
+--> copiar archivo local con parametros
+
+# imagenes de fondo y logo
+/usr/share/self-service-password/htdocs/images
+
+--> copiar archivo local
+ 
+
+

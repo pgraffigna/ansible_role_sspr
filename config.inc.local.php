@@ -5,7 +5,7 @@ $debug = false;
 $ldap_url = "ldap://192.168.121.244";
 $ldap_starttls = false;
 $ldap_binddn = "cn=admin,dc=cultura,dc=lab";
-$ldap_bindpw = "eteZZisn";
+$ldap_bindpw = "PASSWORD";
 $ldap_base = "dc=cultura,dc=lab";
 $ldap_login_attribute = "uid";
 $ldap_fullname_attribute = "cn";

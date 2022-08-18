@@ -1,0 +1,71 @@
+##################### organizaciones
+dn: ou=USUARIOS,dc=cultura,dc=lab
+objectclass: top
+objectclass: organizationalUnit
+ou: USUARIOS
+
+dn: ou=SOPORTE,dc=cultura,dc=lab
+objectclass: top
+objectclass: organizationalUnit
+ou: SOAP
+
+################ organizacion USUARIOS
+dn: uid=pgraffigna,ou=USUARIOS,dc=cultura,dc=lab
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: pablo
+sn: graffigna
+mail: pgraffigna@cultura.lab
+uid: pgraffigna
+userPassword: password123
+title: ovpn
+street: ovpn
+
+dn: uid=tdoumerc,ou=USUARIOS,dc=cultura,dc=lab
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: tomas
+sn: doumerc
+mail: tdoumerc@cultura.lab
+uid: tdoumerc
+userPassword: iesamoo6e
+title: jitsi
+street: jitsi
+
+################# organizacion SOPORTE
+dn: uid=goku,ou=SOPORTE,dc=cultura,dc=lab
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: soporte
+sn: aplicaciones
+mail: soporte.aplicaciones@cultura.lab
+uid: goku
+userPassword: testing
+title: ovpn
+street: ovpn
+
+dn: uid=krilin,ou=SOPORTE,dc=cultura,dc=lab
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: soporte
+sn: aplicaciones
+mail: soporte.aplicaciones@cultura.lab
+uid: krilin
+userPassword: testing456
+title: jitsi
+street: jitsi
+
+######### grupo
+dn: cn=SOAP,ou=SOPORTE,dc=cultura,dc=lab
+objectClass: groupOfNames
+cn: SOAP
+member: uid=goku,ou=SOPORTE,dc=cultura,dc=lab
+member: uid=krilin,ou=SOPORTE,dc=cultura,dc=lab

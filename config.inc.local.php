@@ -55,11 +55,38 @@ $max_attempts_per_ip = 2;
 $max_attempts_block_seconds = "60";
 $client_ip_header = 'REMOTE_ADDR';
 
-// cambio de clave via correo
+// habilitar cambio de clave via CORREO
 $use_tokens = true;
 $crypt_tokens = true;
 $token_lifetime = "3600";
 $keyphrase = "7rRy0}96#4E7#kzb%:,25X}c&66rU";
+
+// parametros SMTP
+$mail_attributes = "mail";
+
+// remitente
+$mail_from = "CORREO";
+$mail_from_name = "Self Service Password administrator";
+$notify_on_change = true;
+
+$mail_sendmailpath = '/usr/sbin/sendmail';
+$mail_protocol = 'smtp';
+$mail_smtp_debug = 0;
+$mail_debug_format = 'html';
+$mail_smtp_host = 'SMTP_SERVER';
+$mail_smtp_auth = true;
+$mail_smtp_user = 'SMTP_USER';
+$mail_smtp_pass = 'SMTP_PASS';
+$mail_smtp_port = 25;
+$mail_smtp_timeout = 30;
+$mail_smtp_keepalive = false;
+$mail_smtp_autotls = true;
+$mail_contenttype = 'text/plain';
+$mail_wordwrap = 0;
+$mail_charset = 'utf-8';
+$mail_priority = 3;
+$mail_newline = PHP_EOL;
+$reset_request_log = "/var/log/self-service-password";
 
 // cambio de clave via SMS o preguntas
 $use_questions = false;

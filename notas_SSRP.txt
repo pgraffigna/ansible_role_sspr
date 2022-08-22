@@ -5,11 +5,10 @@ apt update && sudo apt install -y apache2 php libapache2-mod-php
 apt install -y php-curl php-gd php-ldap php-mbstring smarty3 
 
 # agregar repos para el proyecto
-nano /etc/apt/sources.list.d/ltb-project.list
---> deb [arch=amd64] https://ltb-project.org/debian/stable stable main
+echo 'deb [arch=amd64] https://ltb-project.org/debian/stable stable main' | sudo tee -a /etc/apt/sources.list.d/ltb-project.list
 
 # agregar llave para el repo
-wget -q --show-progress --progress=bar:force 2>&1 -O - https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project | sudo apt-key add -
+wget -q -O - https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project | sudo apt-key add -
 
 # actualizar los repos + instalacion de la app
 apt update && apt install -y self-service-password

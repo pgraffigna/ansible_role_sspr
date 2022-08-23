@@ -1,8 +1,9 @@
+######## instalacion SSPR ###############
 # instalacion apache + php
-apt update && sudo apt install -y apache2 php libapache2-mod-php
+sudo apt update && sudo apt install -y apache2 php libapache2-mod-php
 
 # dependencias php
-apt install -y php-curl php-gd php-ldap php-mbstring smarty3 
+sudo apt install -y php-curl php-gd php-ldap php-mbstring smarty3 
 
 # agregar repos para el proyecto
 echo 'deb [arch=amd64] https://ltb-project.org/debian/stable stable main' | sudo tee -a /etc/apt/sources.list.d/ltb-project.list
@@ -11,31 +12,31 @@ echo 'deb [arch=amd64] https://ltb-project.org/debian/stable stable main' | sudo
 wget -q -O - https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project | sudo apt-key add -
 
 # actualizar los repos + instalacion de la app
-apt update && apt install -y self-service-password
+sudo apt update && sudo apt install -y self-service-password
 
-# configuracion de apache
-## backup de sitio 
+# backup de sitio + config 
 sudo cp /etc/apache2/sites-available/self-service-password.conf{,.bak}
-
---> copiar archivo local con parametros
+sudo cp self-service-password.conf /etc/apache2/sites-available/
 
 # levantar sitio
 a2ensite self-service-password
 systemctl reload apache2.service
 
-# tener en cuenta configurar /etc/hosts + /etc/hostname en equipo local con parametros del servidor remoto para el acceso web
-
-# backup de configuracion de app .php
-cp /usr/share/self-service-password/conf/config.inc{,.local}.php
-
-# configurando archivo php
-
---> copiar archivo local con parametros
+# backup de app + config
+sudo cp /usr/share/self-service-password/conf/config.inc{,.local}.php
+sudo cp config.inc.local.php /usr/share/self-service-password/conf/
 
 # imagenes de fondo y logo
-/usr/share/self-service-password/htdocs/images
+sudo logo.png /usr/share/self-service-password/htdocs/images
 
---> copiar archivo local
- 
+######## certificados autofirmados #################                                                                                                                                        
+sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/ssl/private/sitio.key -out /etc/ssl/certs/sitio.crt
+
+# activando el modulo ssl 
+a2enmod ssl
+systemctl restart apache2
+
+# ufw - puerto 80/443
+sudo ufw allow "Apache Full"
 
 

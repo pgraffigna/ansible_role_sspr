@@ -1,0 +1,78 @@
+---
+- name: Instalacion de dependencias
+  apt:
+    name: ['apache2', 'libapache2-mod-php', 'php', 'php-curl', 'php-gd', 'php-ldap', 'php-mbstring', 'smarty3', 'ufw']
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Importar llave
+  apt_key:
+    url: https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project
+    state: present
+
+- name: Agregar repo
+  apt_repository:
+    repo: deb [arch=amd64] https://ltb-project.org/debian/stable stable main
+    state: present
+    update_cache: true
+
+- name: Instalacion de aplicacion SSPR
+  apt:
+    name: ['self-service-password']
+
+- name: copiando archivos de configuracion
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0775
+    backup: yes
+  with_items:
+    - { src: 'self-service-password.conf', dest: '/etc/apache2/sites-available/' }
+    - { src: 'config.inc.local.php', dest: '/usr/share/self-service-password/conf/' }
+    - { src: 'logo.png', dest: '/usr/share/self-service-password/htdocs/images/' }
+
+- name: Generando llave openSSL
+  openssl_privatekey:
+    path: "/etc/ssl/private/{{ server_hostname }}.key"
+    size: "{{ key_size }}"
+    type: "{{ key_type }}"
+
+- name: Generando CSR
+  openssl_csr:
+    path: "/etc/ssl/private/{{ server_hostname }}.csr"
+    privatekey_path: "/etc/ssl/private/{{ server_hostname }}.key"
+    country_name: "{{ country_name }}"
+    organization_name: "{{ organization_name }}"
+    email_address: "{{ email_address }}"
+    common_name: "{{ server_hostname }}"
+
+- name: Generando certificado autofirmando con openSSL
+  openssl_certificate:
+    path: "/etc/ssl/certs/{{ server_hostname }}.crt"
+    privatekey_path: "/etc/ssl/private/{{ server_hostname }}.key"
+    csr_path: "/etc/ssl/private/{{ server_hostname }}.csr"
+    provider: selfsigned
+
+- name: Activando UFW
+  ufw:
+    state: enabled
+    logging: on
+
+- name: Abriendo puertos HTTPS + SSH
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+    - "{{ ssh | int }}"
+    - "{{ https | int }}"
+
+- name: Activando el sitio
+  command: "/usr/sbin/a2ensite {{ sitio }}"
+
+- name: Instalar modulo SSL
+  command: "/usr/sbin/a2enmod ssl"
+  notify: servicios
+

@@ -29,10 +29,10 @@ sudo cp config.inc.local.php /usr/share/self-service-password/conf/
 # imagenes de fondo y logo
 sudo logo.png /usr/share/self-service-password/htdocs/images
 
-######## certificados autofirmados #################                                                                                                                                        
+######## certificados autofirmados #################
 sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/ssl/private/sitio.key -out /etc/ssl/certs/sitio.crt
 
-# activando el modulo ssl 
+# activando el modulo ssl
 a2enmod ssl
 systemctl restart apache2
 

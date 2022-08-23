@@ -1,0 +1,12 @@
+- name: Recargar Apache
+  service:
+    name: apache2
+    state: reloaded
+  listen: servicios
+
+- name: Reiniciar servicio Apache2 y activar
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes
+  listen: servicios

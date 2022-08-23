@@ -1,0 +1,6 @@
+---
+- hosts: cliente
+  become: true
+
+  roles:
+    - SSPR

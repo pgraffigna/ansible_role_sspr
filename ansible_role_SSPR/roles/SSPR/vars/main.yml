@@ -1,0 +1,11 @@
+---
+sitio: self-service-password
+https: 443
+ssh: 22
+### variables para el certificado
+server_hostname: sspr.cultura.lab
+key_size: 2048
+key_type: RSA # Others include DSA, ECC, Ed25519, Ed448, X25519, X448
+country_name: AR
+email_address: USUARIO@CORREO.COM
+organization_name: CNB

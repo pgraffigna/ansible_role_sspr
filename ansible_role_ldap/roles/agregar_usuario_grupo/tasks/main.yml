@@ -1,0 +1,43 @@
+---
+- include_vars: ../../vars_main.yml
+
+- include_tasks: ../../dep_check.yml
+
+- name: Creando usuario "{{ uid }}" en unidad organizativa SOPORTE
+  ldap_entry:
+    dn: "uid={{ uid }},ou=SOPORTE,dc={{ base }}"
+    objectClass:
+      - top
+      - person
+      - organizationalPerson
+      - inetOrgPerson
+    attributes:
+      cn: "{{ cn }}"
+      sn: "{{ sn }}"
+      mail: "{{ uid }}@cultura.lab"
+      uid: "{{ uid }}"
+      title: "{{ attr_usuarios }}"
+      street: "{{ attr_usuarios }}"
+    state: present
+  args: "{{ ldap_auth }}"
+
+- name: Generando el password
+  ldap_passwd:
+    dn: "uid={{ uid }},ou=SOPORTE,dc={{ base }}"
+    passwd: "{{ password }}"
+  args: "{{ ldap_auth }}"
+
+- name: Agregando usuarios al grupo SOAP
+  ldap_attr:
+    dn: "cn=SOAP,ou=SOPORTE,dc={{ base }}"
+    name: member
+    values: "cn=SOAP,ou=SOPORTE,dc={{ base }}"
+    state: present
+  args: "{{ ldap_auth }}"
+
+- name: Mensaje post-tareas
+  debug:
+    msg:
+    - 'usuario {{ uid }} creado..no te olvides de agregar el ACL'
+    - 'olcAccess: {X}to attrs=userPassword by self write by dn="uid={{ uid }},ou=SOPORTE,dc={{ base }}" write by anonymous auth by * none'
+

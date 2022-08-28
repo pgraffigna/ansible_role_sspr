@@ -1,0 +1,36 @@
+---
+- hosts: ldap
+  become: true
+
+  vars_prompt:
+    - name: uid
+      prompt: "Ingresa el UID del usuario"
+      private: no
+
+    - name: attr_eliminar
+      prompt: "Ingresa el nombre del ATRIBUTO a eliminar, ENTER si no hace falta"
+      private: no
+
+    - name: attr_usuarios
+      prompt: "Ingresa el valor para el ATRIBUTO (title+street), ENTER si no hace falta"
+      private: no
+
+    - name: cn
+      prompt: "Ingresa el CN ( FirstName ) para el usuario, ENTER si no hace falta"
+      private: no
+
+    - name: sn
+      prompt: "Ingresa el SN ( SecondName ) para el usuario, ENTER si no hace falta"
+      private: no
+
+    # - name: password
+    #   prompt: "Ingresa el password para el usuario, ENTER si no hace falta"
+    #   private: no
+    #   encrypt: md5_crypt
+    #   confirm: yes
+
+  roles:
+    # - agregar_usuario_ou
+    # - eliminar_usuario_ou
+    - agregar_usuario_grupo
+    #- eliminar_atributo

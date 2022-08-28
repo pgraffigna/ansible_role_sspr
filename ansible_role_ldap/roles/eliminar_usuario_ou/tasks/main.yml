@@ -1,0 +1,10 @@
+---
+- include_vars: ../../vars_main.yml
+
+- include_tasks: ../../dep_check.yml
+
+- name: Borrando "{{ uid }}" de unidad organizativa "{{ ou }}"
+  ldap_entry:
+    dn: "uid={{ uid }},ou={{ ou }},dc={{ base }}"
+    state: absent
+  args: "{{ ldap_auth }}"

@@ -1,0 +1,12 @@
+---
+- include_vars: ../../vars_main.yml
+
+- include_tasks: ../../dep_check.yml
+
+- name: Eliminando atributo "{{ attr_eliminar }}" de unidad organizativa "{{ ou }}"
+  ldap_attr:
+    dn: "uid={{ uid }},ou={{ ou }},dc={{ base }}"
+    name: "{{ attr_eliminar }}"
+    values: []
+    state: exact
+  args: "{{ ldap_auth }}"

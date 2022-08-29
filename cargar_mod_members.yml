@@ -1,0 +1,42 @@
+---
+- include_vars: ../../vars_main.yml
+
+- include_tasks: ../../dep_check.yml
+
+# mod referencial integrity
+- name: Cargando módulo referencial integrity
+  ldap_attrs:
+    server_uri: "{{ ldap_url }}"
+    dn: cn=module{0},cn=config
+    attributes:
+      olcModuleLoad:
+        - refint.la
+  args: "{{ ldap_auth }}"
+
+# mod memberof
+- name: Cargando módulo memberof
+  ldap_attrs:
+    server_uri: "{{ ldap_url }}"
+    dn: cn=module{0},cn=config
+    attributes:
+      olcModuleLoad:
+        - memberof.la
+  args: "{{ ldap_auth }}"
+
+- name: Cargando OVERLAY para el módulo memberof
+  ldap_entry:
+    server_uri: "{{ ldap_url }}"
+    dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
+    objectClass:
+      - olcOverlayConfig
+      - olcMemberOf
+      - olcConfig
+      - top
+    attributes:
+      olcOverlay: memberof
+      olcMemberOfDangling: ignore
+      olcMemberOfRefInt: TRUE
+      olcMemberOfGroupOC: groupOfNames
+      olcMemberOfMemberAD: member
+      olcMemberOfMemberOfAD: memberOf
+  args: "{{ ldap_auth }}"

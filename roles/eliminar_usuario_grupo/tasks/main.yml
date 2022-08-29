@@ -1,0 +1,30 @@
+---
+- include_vars: ../../vars_main.yml
+
+- include_tasks: ../../dep_check.yml
+
+- name: Eliminando "{{ uid }}" del grupo "{{ grupo }}"
+  ldap_attrs:
+    dn: "cn={{ grupo }},ou={{ ou_soporte }},dc={{ base }}"
+    attributes:
+      member: "uid={{ uid }},ou={{ ou_soporte }},dc={{ base }}"
+    state: absent
+  args: "{{ ldap_auth }}"
+
+- name: Eliminando el usuario "{{ uid }}" de la unidad organizativa "{{ ou_soporte }}"
+  ldap_entry:
+    dn: "uid={{ uid }},ou={{ ou_soporte }},dc={{ base }}"
+    objectClass:
+      - top
+      - person
+      - organizationalPerson
+      - inetOrgPerson
+    attributes:
+      cn: "{{ cn }}"
+      sn: "{{ sn }}"
+      mail: "{{ uid }}@cultura.lab"
+      uid: "{{ uid }}"
+      title: "{{ attr_usuarios }}"
+      street: "{{ attr_usuarios }}"
+    state: absent
+  args: "{{ ldap_auth }}"

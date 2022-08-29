@@ -1,0 +1,69 @@
+---
+- include_vars: ../../vars_main.yml
+
+- include_tasks: ../../dep_check.yml
+
+- name: Creando usuario "{{ uid }}" en unidad organizativa "{{ ou_soporte }}"
+  ldap_entry:
+    dn: "uid={{ uid }},ou={{ ou_soporte }},dc={{ base }}"
+    objectClass:
+      - top
+      - person
+      - organizationalPerson
+      - inetOrgPerson
+    attributes:
+      cn: "{{ cn }}"
+      sn: "{{ sn }}"
+      mail: "{{ uid }}@cultura.lab"
+      uid: "{{ uid }}"
+      title: "{{ attr_usuarios }}"
+      street: "{{ attr_usuarios }}"
+    state: present
+  args: "{{ ldap_auth }}"
+
+- name: Generando el password
+  ldap_passwd:
+    dn: "uid={{ uid }},ou={{ ou_soporte }},dc={{ base }}"
+    passwd: "{{ password }}"
+  args: "{{ ldap_auth }}"
+
+- name: Agregando "{{ uid }}" al grupo "{{ grupo }}"
+  ldap_attrs:
+    dn: "cn={{ grupo }},ou={{ ou_soporte }},dc={{ base }}"
+    attributes:
+      member: "uid={{ uid }},ou={{ ou_soporte }},dc={{ base }}"
+    state: present
+  args: "{{ ldap_auth }}"
+
+- name: Generando las ACL
+  ldap_attrs:
+    dn: olcDatabase={1}mdb,cn=config
+    attributes:
+      olcAccess: # agregar las ACL existentes
+        - >-
+          to attrs=userPassword
+          by self write
+          by anonymous auth
+          by dn="uid=goku,ou={{ ou_soporte }},dc={{ base }}" write
+          by * break
+        - >-
+          to attrs=userPassword
+          by self write
+          by anonymous auth
+          by dn="uid=krilin,ou={{ ou_soporte }},dc={{ base }}" write
+          by * break
+        - >-
+          to attrs=userPassword
+          by self write
+          by anonymous auth
+          by dn="uid={{ uid }},ou={{ ou_soporte }},dc={{ base }}" write
+          by * none
+        - >-
+          to dn.subtree="ou={{ ou_usuarios }},dc={{ base }}"
+          by group.exact="cn={{ grupo }},ou={{ ou_soporte }},dc={{ base }}" read
+        - >-
+          to * by * read
+    ordered: true
+    state: exact
+
+

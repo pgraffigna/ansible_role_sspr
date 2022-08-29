@@ -23,14 +23,14 @@
       prompt: "Ingresa el SN ( SecondName ) para el usuario, ENTER si no hace falta"
       private: no
 
-    # - name: password
-    #   prompt: "Ingresa el password para el usuario, ENTER si no hace falta"
-    #   private: no
-    #   encrypt: md5_crypt
-    #   confirm: yes
+    - name: password
+      prompt: "Ingresa el password para el usuario"
+      private: no
+      confirm: yes
 
   roles:
     # - agregar_usuario_ou
     # - eliminar_usuario_ou
-    - agregar_usuario_grupo
+    # - agregar_usuario_grupo
+    #- eliminar_usuario_grupo
     #- eliminar_atributo

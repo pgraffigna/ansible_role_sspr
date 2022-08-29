@@ -3,9 +3,9 @@
 
 - include_tasks: ../../dep_check.yml
 
-- name: Eliminando atributo "{{ attr_eliminar }}" de unidad organizativa "{{ ou }}"
+- name: Eliminando atributo "{{ attr_eliminar }}" de unidad organizativa "{{ ou_usuarios }}"
   ldap_attr:
-    dn: "uid={{ uid }},ou={{ ou }},dc={{ base }}"
+    dn: "uid={{ uid }},ou={{ ou_usuarios }},dc={{ base }}"
     name: "{{ attr_eliminar }}"
     values: []
     state: exact

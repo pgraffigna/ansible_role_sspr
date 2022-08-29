@@ -3,8 +3,8 @@
 
 - include_tasks: ../../dep_check.yml
 
-- name: Borrando "{{ uid }}" de unidad organizativa "{{ ou }}"
+- name: Borrando "{{ uid }}" de unidad organizativa "{{ ou_usuarios }}"
   ldap_entry:
-    dn: "uid={{ uid }},ou={{ ou }},dc={{ base }}"
+    dn: "uid={{ uid }},ou={{ ou_usuarios }},dc={{ base }}"
     state: absent
   args: "{{ ldap_auth }}"

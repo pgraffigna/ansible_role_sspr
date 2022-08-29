@@ -1,5 +1,5 @@
 [ldap]
-192.168.121.243
+192.168.121.181
 
 [ldap:vars]
 ansible_user=vagrant

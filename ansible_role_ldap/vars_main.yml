@@ -1,15 +1,9 @@
 ---
 ou: USUARIOS
-#uid: cristina
-password: cristina2023
-#attr_usuarios: jitsi
-#attr_eliminar: street
 base: cultura,dc=lab
-#cn: cris
-#sn: tina
-#grupo: SOAP
+ldap_url: ldap://192.168.121.181
 ldap_auth:
-  server_uri: ldap://192.168.121.243/
+  server_uri: ldap://192.168.121.243
   bind_dn: cn=admin,dc=cultura,dc=lab
   bind_pw: eteZZisn
 

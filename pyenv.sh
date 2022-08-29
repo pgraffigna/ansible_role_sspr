@@ -20,10 +20,10 @@ sudo apt install -y python3-venv
 read -p "$(echo -e ${azul}Ingresa la version de ansible a instalar por ej 2.9 \>\> ${end})" ANSIBLE_VERSION
 
 # crea el nuevo entorno
-/usr/bin/python3 -m venv ansible_"$ANSIBLE_VERSION"
+/usr/bin/python3 -m venv cultura_"$ANSIBLE_VERSION"
 
 # activa el nuevo entorno
-source ./ansible_"$ANSIBLE_VERSION"/bin/activate
+source ./cultura_"$ANSIBLE_VERSION"/bin/activate
 
 # actualiza el gestor pip
 python3 -m pip install --upgrade pip

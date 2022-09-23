@@ -1,6 +1,6 @@
 ######## instalando ldap ###########################
 # actualizando los repos
-sudo apt update; sudo apt install -y slapd ldap-utils	
+sudo apt update; sudo apt install -y slapd ldap-utils
 
 # configurando el hostname 
 sudo hostnamectl set-hostname ldap.cultura.lab
@@ -14,73 +14,6 @@ sudo dpkg-reconfigure slapd
 --> remove database when slapd is purged? NO
 --> move old database? YES
 
-
-####### ldap cli ################
-sudo slapcat
-
-# configurando la base de usuarios
-sudo ldapadd -D "cn=admin,dc=cultura,dc=lab" -W -H ldapi:/// -f /etc/ldap/users.ldif
-
-# buscando OUs en el dominio cultura.lab
-ldapsearch -x -b "dc=cultura,dc=lab" ou
-
-# buscando todos los datos del OU Personal
-ldapsearch -x -b "ou=Personal,dc=cultura,dc=lab"
-
-# buscando por atributos 
-ldapsearch -x -D "cn=admin,dc=ldap,dc=com" -w "PASSWORD" -h ldap-01.cs56cloud.internal -b "dc=ldap,dc=com" "(&(cn=dmoroz)(objectClass=*)(street=ovpn))"
-
-# buscando miembros de grupos
-sudo ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "dc=cultura,dc=lab" cn=SOAP
-
-# listando ACL
-sudo ldapsearch  -Y EXTERNAL -H ldapi:/// -b cn=config 'olcDatabase={1}mdb'
-
-# aplicando cambios en ACL
-sudo ldapmodify  -Y EXTERNAL -H ldapi:/// -f add_acl.ldif 
-
-##################### configurando grupos en ldap ##########
-# cargando modulo memberof
-dn: cn=module{0},cn=config
-changetype: modify
-add: olcModuleLoad
-olcModuleLoad: memberof.la
-
-## aplicando
-ldapadd -Y EXTERNAL -H ldapi:/// -f update-module.ldif
-
-# cargando overlay
-dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
-objectClass: olcMemberOf
-objectClass: olcOverlayConfig
-objectClass: olcConfig
-objectClass: top
-olcOverlay: memberof 
-olcMemberOfRefInt: TRUE
-olcMemberOfDangling: ignore
-olcMemberOfGroupOC: groupOfNames
-olcMemberOfMemberAD: member
-olcMemberOfMemberOfAD: memberOf
-
-## aplicando
-ldapadd -Y EXTERNAL -H ldapi:/// -f add-memberof-overlay.ldif
-
-# cargando modulo referential integrity
-dn: cn=module{0},cn=config
-changetype: modify
-add: olcModuleLoad
-olcModuleLoad: refint.la
-
-## aplicando
-ldapadd -Y EXTERNAL -H ldapi:/// -f add-refint.ldif
-
-###### creando grupos ######
-dn: cn=SOAP,ou=SOPORTE,dc=cultura,dc=lab
-objectClass: groupOfNames
-cn: SOAP
-member: uid=goku,ou=USUARIOS,dc=cultura,dc=lab
-member: uid=krilin,ou=USUARIOS,dc=cultura,dc=lab
-
 ####### instalando phpldapadmin #################
 sudo apt -y install phpldapadmin
 
@@ -91,7 +24,41 @@ sudo nano /etc/phpldapadmin/config.php
 --> $servers->setValue('login','bind_id','cn=admin,dc=cultura,dc=lab');
 --> $config->custom->appearance['hide_template_warning'] = true;
 
+####### login usando el UID de los usuarios - PHPldapadmin ###########
+$servers->setValue('server','host','172.16.1.2');
+$servers->setValue('server','base','array('ldap01'));
+$servers->setValue('login',''auth_type','session');
+$servers->setValue('login','bind_id','cn=admin,dc=ldap01');
+$servers->setValue('login','bind_pass','Z00lOO');
+$servers->setValue('login','attr','uid');
+$servers->setValue('login','fallback_dn','true);
 
+########### anonymous login disabled ###################33
+$servers->setValue('login','anon_bind',false);
 
+######### comandos #########################
+# chequeando la configuracion
+sudo slapcat
+
+# aplicando cambios
+sudo ldapadd -D "cn=admin,dc=cultura,dc=lab" -W -H ldapi:/// -f /etc/ldap/users.ldif
+
+# buscando OUs en el dominio cultura.lab
+ldapsearch -x -b "dc=cultura,dc=lab" ou
+
+# buscando todos los datos del OU Personal
+ldapsearch -x -b "ou=Personal,dc=cultura,dc=lab"
+
+# buscando por atributos - street
+ldapsearch -x -D "cn=admin,dc=ldap,dc=com" -w "PASSWORD" -h ldap-01.cs56cloud.internal -b "dc=ldap,dc=com" "(&(cn=dmoroz)(objectClass=*)(street=ovpn))"
+
+# buscando miembros de grupos
+sudo ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "dc=cultura,dc=lab" cn=SOAP
+
+# listando ACL
+sudo ldapsearch  -Y EXTERNAL -H ldapi:/// -b cn=config 'olcDatabase={1}mdb'
+
+# aplicando nuevos ACLs
+sudo ldapmodify  -Y EXTERNAL -H ldapi:/// -f add_acl.ldif
 
 

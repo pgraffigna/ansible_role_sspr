@@ -1,0 +1,85 @@
+# provider - master
+## creando usuario replicador en provider
+dn: cn=replicador,dc=cultura,dc=lab
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: replicador
+description: Replication user
+userPassword: password123
+
+ldapadd -D "cn=admin,dc=ldap,dc=cultura" -W -H ldapi:/// -f usuario_replicador.ldif 
+
+# ACLS para usuario replicador
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+add: olcAccess
+olcAccess: {0}to *
+  by dn.exact="cn=replicador,dc=ldap,dc=cultura" read
+  by * break
+-
+add: olcLimits
+olcLimits: dn.exact="cn=replicador,dc=ldap,dc=cultura"
+  time.soft=unlimited time.hard=unlimited
+  size.soft=unlimited size.hard=unlimited
+
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f alc_replicador.ldif
+
+# modulo syncprov + indexing
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: entryCSN eq
+-
+add: olcDbIndex
+olcDbIndex: entryUUID eq
+
+# carga el modulo syncprov
+dn: cn=module{0},cn=config
+changetype: modify
+add: olcModuleLoad
+olcModuleLoad: syncprov
+
+# overlay para el provider 
+dn: olcOverlay=syncprov,olcDatabase={1}mdb,cn=config
+changetype: add
+objectClass: olcOverlayConfig
+objectClass: olcSyncProvConfig
+olcOverlay: syncprov
+olcSpCheckpoint: 100 10
+olcSpSessionLog: 100
+
+ldapadd -Q -Y EXTERNAL -H ldapi:/// -f master_sync.ldif
+
+# consumer - slave
+dn: cn=module{0},cn=config
+changetype: modify
+add: olcModuleLoad
+olcModuleLoad: syncprov
+
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: entryUUID eq
+-
+add: olcSyncrepl
+olcSyncrepl: 
+  rid=100
+  provider=ldap://ldap-final
+  bindmethod=simple
+  binddn="cn=replicador,dc=ldap,dc=cultura" 
+  credentials=password123
+  searchbase="dc=ldap,dc=cultura"
+  schemachecking=on
+  type=refreshAndPersist 
+  retry="60 +"
+-
+add: olcUpdateRef
+olcUpdateRef: ldap://ldap-final
+
+sudo ldapadd -Q -Y EXTERNAL -H ldapi:/// -f slave-sync.ldif
+
+# validacion en master
+ldapsearch -x -D "cn=admin,dc=ldap,dc=cultura" -w "eteZZisn" -h ldap-final -b "dc=ldap,dc=cultura" ou
+
+# validacion en slave
+ldapsearch -x -D "cn=admin,dc=ldap,dc=cultura" -w "eteZZisn" -h ldap-slave -b "dc=ldap,dc=cultura" ou

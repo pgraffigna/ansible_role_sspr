@@ -1,0 +1,22 @@
+# deshabilita consulta anonima
+dn: cn=config
+changetype: modify
+add: olcDisallows
+olcDisallows: bind_anon
+-
+
+dn: olcDatabase={-1}frontend,cn=config
+changetype: modify
+add: olcRequires
+olcRequires: authc
+
+# habilita consulta anonima
+dn: cn=config
+changetype: modify
+delete: olcDisallows
+
+dn: olcDatabase={-1}frontend,cn=config
+changetype: modify
+delete: olcRequires
+
+

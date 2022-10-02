@@ -1,9 +1,12 @@
 ---
+- include_vars: ../../vars_main.yml
+
 - name: Instalacion de dependencias
   apt:
-    name: ['apache2', 'libapache2-mod-php', 'php', 'php-curl', 'php-gd', 'php-ldap', 'php-mbstring', 'smarty3', 'ufw']
+    name: "{{ item }}"
     update_cache: true
     cache_valid_time: 3600
+  with_items: "{{ sspr_deps }}"
 
 - name: Importar llave
   apt_key:
@@ -45,7 +48,7 @@
     privatekey_path: "/etc/ssl/private/{{ server_hostname }}.key"
     country_name: "{{ country_name }}"
     organization_name: "{{ organization_name }}"
-    email_address: "{{ email_address }}"
+    email_address: "{{ email_admins }}"
     common_name: "{{ server_hostname }}"
 
 - name: Generando certificado autofirmando con openSSL
@@ -70,9 +73,9 @@
     - "{{ https | int }}"
 
 - name: Activando el sitio
-  command: "/usr/sbin/a2ensite {{ sitio }}"
+  command: "/usr/sbin/a2ensite {{ sitio_conf }}"
 
 - name: Instalar modulo SSL
   command: "/usr/sbin/a2enmod ssl"
-  notify: servicios
+  notify: servicios_apache
 

@@ -2,11 +2,11 @@
   service:
     name: apache2
     state: reloaded
-  listen: servicios
+  listen: servicios_apache
 
 - name: Reiniciar servicio Apache2 y activar
   service:
     name: apache2
     state: restarted
     enabled: yes
-  listen: servicios
+  listen: servicios_apache

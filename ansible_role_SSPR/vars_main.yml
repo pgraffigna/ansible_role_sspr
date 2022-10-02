@@ -1,0 +1,13 @@
+---
+### sspr ###
+sitio_conf: self-service-password.conf
+https: 443
+ssh: 22
+
+### variables para el certificado
+server_hostname: sspr.cultura.lab
+key_size: 2048
+key_type: RSA
+country_name: AR
+email_admins: usuario@correo
+organization_name: cnb

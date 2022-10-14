@@ -1,3 +1,4 @@
+##### template para organizaciones, grupos y usuarios
 ##################### organizaciones
 dn: ou=USUARIOS,dc=cultura,dc=lab
 objectclass: top
@@ -32,7 +33,7 @@ cn: tomas
 sn: doumerc
 mail: tdoumerc@cultura.lab
 uid: tdoumerc
-userPassword: iesamoo6e
+userPassword: password456
 title: jitsi
 street: jitsi
 
@@ -44,9 +45,9 @@ objectclass: organizationalPerson
 objectclass: inetOrgPerson
 cn: soporte
 sn: aplicaciones
-mail: soporte.aplicaciones@cultura.lab
+mail: soporte@cultura.lab
 uid: goku
-userPassword: testing
+userPassword: password789 
 title: ovpn
 street: ovpn
 
@@ -57,7 +58,7 @@ objectclass: organizationalPerson
 objectclass: inetOrgPerson
 cn: soporte
 sn: aplicaciones
-mail: soporte.aplicaciones@cultura.lab
+mail: soporte@cultura.lab
 uid: krilin
 userPassword: testing456
 title: jitsi

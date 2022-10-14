@@ -1,0 +1,6 @@
+######## /etc/cron.d/ldapbackup 
+
+API="telegram_api_bot"
+CHAT_ID="123456789"
+
+53 14 * * *  root  /home/vagrant/ldap_backup.sh && curl -F "text= El backup de ldap se realizo correctamente" "https://api.telegram.org/${API}/sendMessage?chat_id=${CHAT_ID}"

@@ -5,10 +5,10 @@ changetype: modify
 add: olcModuleLoad
 olcModuleLoad: memberof.la
 
-## aplicando
+############ aplicando cambios
 ldapadd -Y EXTERNAL -H ldapi:/// -f update-module.ldif
 
-# cargando el overlay
+########### cargando el overlay
 dn: olcOverlay=memberof,olcDatabase={1}mdb,cn=config
 objectClass: olcMemberOf
 objectClass: olcOverlayConfig
@@ -21,31 +21,30 @@ olcMemberOfGroupOC: groupOfNames
 olcMemberOfMemberAD: member
 olcMemberOfMemberOfAD: memberOf
 
-## aplicando
+############ aplicando cambios
 ldapadd -Y EXTERNAL -H ldapi:/// -f add-memberof-overlay.ldif
 
-# cargando modulo referential integrity
+############## cargando modulo referential integrity
 dn: cn=module{0},cn=config
 changetype: modify
 add: olcModuleLoad
 olcModuleLoad: refint.la
 
-## aplicando
+########## aplicando cambios
 ldapadd -Y EXTERNAL -H ldapi:/// -f add-refint.ldif
 
-# acl para grupos
+############ ACL para grupos
 dn: olcDatabase={1}mdb,cn=config
 changetype: modify
 delete: olcAccess
 -
-## nuevo acl
 add: olcAccess
 olcAccess: {0}to attrs=userPassword by self write by dn="uid=goku,ou=SOPORTE,dc=cultura,dc=lab" write by anonymous auth by * break  
 olcAccess: {1}to attrs=userPassword by self write by dn="uid=krilin,ou=SOPORTE,dc=cultura,dc=lab" write by anonymous auth by * none  
 olcAccess: {2}to dn.subtree="ou=USUARIOS,dc=cultura,dc=lab" by group.exact="cn=SOAP,ou=SOPORTE,dc=cultura,dc=lab" read
 olcAccess: {3}to * by * read
 
-############## template grupos ##############
+############## template grupos 
 dn: cn=SOAP,ou=SOPORTE,dc=cultura,dc=lab
 objectClass: groupOfNames
 cn: SOAP

@@ -1,4 +1,4 @@
-# deshabilita consulta anonima
+############# deshabilita consulta anonima
 dn: cn=config
 changetype: modify
 add: olcDisallows
@@ -10,7 +10,7 @@ changetype: modify
 add: olcRequires
 olcRequires: authc
 
-# habilita consulta anonima
+########### habilita consulta anonima
 dn: cn=config
 changetype: modify
 delete: olcDisallows

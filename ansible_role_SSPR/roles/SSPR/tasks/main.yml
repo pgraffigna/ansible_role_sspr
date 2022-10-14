@@ -21,20 +21,20 @@
 
 - name: Instalacion de aplicacion SSPR
   apt:
-    name: ['self-service-password']
+    name: [ 'self-service-password' ]
 
 - name: copiando archivos de configuracion
   copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ item.origen }}"
+    dest: "{{ item.destino }}"
     owner: root
     group: root
     mode: 0775
     backup: yes
   with_items:
-    - { src: 'self-service-password.conf', dest: '/etc/apache2/sites-available/' }
-    - { src: 'config.inc.local.php', dest: '/usr/share/self-service-password/conf/' }
-    - { src: 'logo.png', dest: '/usr/share/self-service-password/htdocs/images/' }
+    - { origen: 'self-service-password.conf', destino: '/etc/apache2/sites-available/' }
+    - { origen: 'config.inc.local.php', destino: '/usr/share/self-service-password/conf/' }
+    - { origen: 'logo.png', destino: '/usr/share/self-service-password/htdocs/images/' }
 
 - name: Generando llave openSSL
   openssl_privatekey:

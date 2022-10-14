@@ -1,12 +1,12 @@
-######## instalando ldap ###########################
+######## instalacion ldap
 # actualizando los repos
 sudo apt update; sudo apt install -y slapd ldap-utils
 
-# configurando el hostname 
+######### configurando el hostname
 sudo hostnamectl set-hostname ldap.cultura.lab
-echo '192.168.121.200 ldap.cultura.lab ldap' | sudo tee -a /etc/hosts
+sudo sed -i 's/127\.0\.1\.1[\t]ubuntu2004\.localdomain/127\.0\.1\.1       ldap\.cultura\.lab/' /etc/hosts
 
-# reconfigurando slapd
+############# configurando slapd
 sudo dpkg-reconfigure slapd
 --> omit openLDAP server configuration? NO
 --> DNS domain name: cultura.lab
@@ -14,17 +14,17 @@ sudo dpkg-reconfigure slapd
 --> remove database when slapd is purged? NO
 --> move old database? YES
 
-####### instalando phpldapadmin #################
+########### instalacion phpldapadmin 
 sudo apt -y install phpldapadmin
 
-# configurando phpldapadmin
+############ configurando phpldapadmin
 sudo nano /etc/phpldapadmin/config.php
 --> $servers->setValue('server','host','server_domain_name_or_IP');
 --> $servers->setValue('server','base',array('dc=cultura,dc=lab'));
 --> $servers->setValue('login','bind_id','cn=admin,dc=cultura,dc=lab');
 --> $config->custom->appearance['hide_template_warning'] = true;
 
-####### login usando el UID de los usuarios - PHPldapadmin ###########
+####### login usando el atributo UID de los usuarios 
 $servers->setValue('server','host','172.16.1.2');
 $servers->setValue('server','base','array('ldap01'));
 $servers->setValue('login',''auth_type','session');
@@ -33,10 +33,10 @@ $servers->setValue('login','bind_pass','Z00lOO');
 $servers->setValue('login','attr','uid');
 $servers->setValue('login','fallback_dn','true);
 
-########### anonymous login disabled ###################33
+########### desactivar login anonimo 
 $servers->setValue('login','anon_bind',false);
 
-######### comandos #########################
+######### comandos 
 # chequeando la configuracion
 sudo slapcat
 
@@ -49,7 +49,7 @@ ldapsearch -x -b "dc=cultura,dc=lab" ou
 # buscando todos los datos del OU Personal
 ldapsearch -x -b "ou=Personal,dc=cultura,dc=lab"
 
-# buscando por atributos - street
+# buscando por atributos (street)
 ldapsearch -x -D "cn=admin,dc=ldap,dc=com" -w "PASSWORD" -h ldap-01.cs56cloud.internal -b "dc=ldap,dc=com" "(&(cn=dmoroz)(objectClass=*)(street=ovpn))"
 
 # buscando miembros de grupos

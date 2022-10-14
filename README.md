@@ -1,9 +1,11 @@
 # ldap_SSRP
 
-### Repo con instrucciones para crear un servicio de "Self Service Password Reset" + archivos de configuracion para levantar un ldap de pruebas.
+Repo con roles de ansible para desplegar un servicio de reseteo de credenciales y realizar tareas varias sobre un servidor OPENLDAP.
 
 ---
 
-### Testeado con vagrant + ubuntu 20.04
+Testeado con vagrant + qemu + ubuntu 20.04.
+
+
 
 

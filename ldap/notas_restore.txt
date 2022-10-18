@@ -1,0 +1,18 @@
+# parar el servicio ldap
+sudo systemctl stop slapd.service
+
+# eliminar la DB en uso
+sudo rm -rf /etc/ldap/slapd.d/* /var/lib/ldap/*
+
+# restaurar configuración + usuarios
+sudo slapadd -F /etc/ldap/slapd.d -b cn=config -l /backup/config.ldif
+sudo slapadd -F /etc/ldap/slapd.d -b dc=example,dc=com -l /backup/usuarios.ldif
+
+# cambiar permisos a carpetas/archivos
+sudo chown -R openldap:openldap /etc/ldap/slapd.d/
+sudo chown -R openldap:openldap /var/lib/ldap/
+
+# reiniciar el servicio ldap
+sudo systemctl start slapd.service
+
+

@@ -1,4 +1,4 @@
-######## /etc/cron.d/ldapbackup 
+######## /etc/cron.d/ldapbackup
 
 API="telegram_api_bot"
 CHAT_ID="123456789"

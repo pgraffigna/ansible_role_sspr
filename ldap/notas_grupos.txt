@@ -44,10 +44,50 @@ olcAccess: {1}to attrs=userPassword by self write by dn="uid=krilin,ou=SOPORTE,d
 olcAccess: {2}to dn.subtree="ou=USUARIOS,dc=cultura,dc=lab" by group.exact="cn=SOAP,ou=SOPORTE,dc=cultura,dc=lab" read
 olcAccess: {3}to * by * read
 
-############## template grupos 
-dn: cn=SOAP,ou=SOPORTE,dc=cultura,dc=lab
+######################### grupo nuevo con usuarios existentes con ou existente (USUARIOS)
+dn: cn=MNBA,ou=USUARIOS,dc=cultura,dc=lab
 objectClass: groupOfNames
-cn: SOAP
-member: uid=goku,ou=USUARIOS,dc=cultura,dc=lab
-member: uid=krilin,ou=USUARIOS,dc=cultura,dc=lab
+cn: MNBA
+member: uid=tdoumerc,ou=USUARIOS,dc=cultura,dc=lab
+member: uid=pgraffigna,ou=USUARIOS,dc=cultura,dc=lab
 
+# grupo nuevo con usuarios nuevos con ou nuevo
+##################### organizacion COLLECTIVE
+dn: ou=COLLECTIVE,dc=cultura,dc=lab
+objectclass: top
+objectclass: organizationalUnit
+ou: COLLECTIVE
+
+################ usuarios
+dn: uid=pperez,ou=COLLECTIVE,dc=cultura,dc=lab
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: pepe
+sn: perez
+mail: pperez@cultura.lab
+uid: pperez
+userPassword: password123
+title: jitsi
+street: ovpn
+
+dn: uid=ttesting,ou=COLLECTIVE,dc=cultura,dc=lab
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: test
+sn: testing
+mail: ttesting@cultura.lab
+uid: ttesting
+userPassword: password456
+title: jitsi
+street: ovpn
+
+######### grupo BUCKET
+dn: cn=BUCKET,ou=COLLECTIVE,dc=cultura,dc=lab
+objectClass: groupOfNames
+cn: BUCKET
+member: uid=pperez,ou=COLLECTIVE,dc=cultura,dc=lab
+member: uid=ttesting,ou=COLLECTIVE,dc=cultura,dc=lab

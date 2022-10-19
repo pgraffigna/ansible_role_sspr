@@ -50,7 +50,7 @@ ldapsearch -x -b "dc=cultura,dc=lab" ou
 ldapsearch -x -b "ou=Personal,dc=cultura,dc=lab"
 
 # buscando por atributos (street)
-ldapsearch -x -D "cn=admin,dc=ldap,dc=com" -w "PASSWORD" -h ldap-01.cs56cloud.internal -b "dc=ldap,dc=com" "(&(cn=dmoroz)(objectClass=*)(street=ovpn))"
+ldapsearch -x -D "cn=admin,dc=ldap,dc=com" -w "PASSWORD" -h ldap-01 -b "dc=ldap,dc=com" "(&(cn=usuario1)(objectClass=*)(street=ovpn))"
 
 # buscando miembros de grupos
 sudo ldapsearch -H ldapi:/// -Y EXTERNAL -LLL -b "dc=cultura,dc=lab" cn=SOAP

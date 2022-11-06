@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# instalacion de freeradius + modula ldap 
+
+# instalando freeradius + modulo ldap
+sudo apt install -y freeradius freeradius-utils freeradius-ldap
+
+# configuracion del modulo ldap
+sudo cp /etc/freeradius/3.0/mods-available/ldap /etc/freeradius/3.0/mods-enabled/ && sudo nano /etc/freeradius/3.0/mods-enabled/ldap
+
+        server = '192.168.121.141'
+        identity = 'cn=admin,dc=cultura,dc=lab'
+        password = eteZZisn
+        base_dn = 'dc=cultura,dc=lab'
+
+# backup de sitios por default
+mkdir ~/backup_radius && sudo cp /etc/freeradius/3.0/sites-enabled/{default,inner-tunnel} ~/backup_radius
+
+# eliminando sitios por default
+sudo rm /etc/freeradius/3.0/sites-enabled/{default,inner-tunnel}
+
+# configurando autenticacion
+sudo nano /etc/freeradius/3.0/sites-enabled/my_server
+
+server my_server {
+listen {
+        type = auth
+        ipaddr = *
+        port = 1812
+}
+authorize {
+        ldap
+        if (ok || updated)  {
+        update control {
+        Auth-Type := ldap
+        }
+        }
+}
+authenticate {
+        Auth-Type LDAP {
+                ldap
+        }
+}
+}
+
+# editando los clientes
+sudo nano -l /etc/freeradius/3.0/clients.conf
+
+client 192.168.121.141 } # direccion del ldap
+ipaddr = 192.168.121.0/24 # ip de la red
+secret = password123 # secreto compartido
+
+# fix modulo eap
+rm /etc/freeradius/3.0/mods-enabled/eap
+
+# activando el servicio
+systemctl enable freeradius.service --now
+
+# validando conexion
+radtest usuario password ip_servidor_ldap 1812 secreto_compartido #1812 es el puerto que usa radius
+

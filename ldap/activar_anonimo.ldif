@@ -1,0 +1,16 @@
+dn: cn=config
+changetype: modify
+delete: olcDisallows
+olcDisallows: bind_anon
+
+dn: cn=config
+changetype: modify
+delete: olcRequires
+olcRequires: authc
+
+dn: olcDatabase={-1}frontend,cn=config
+changetype: modify
+delete: olcRequires
+olcRequires: authc
+
+# sudo ldapadd -Y EXTERNAL -H ldapi:/// -f enable_anon_bind.ldif 

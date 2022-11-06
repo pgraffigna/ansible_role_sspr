@@ -1,0 +1,6 @@
+---
+- hosts: radius
+  become: true
+
+  roles:
+    - freeradius

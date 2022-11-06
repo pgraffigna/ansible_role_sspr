@@ -1,0 +1,53 @@
+---
+#- include_vars: ../../vars_main.yml
+- name: Instalacion de dependencias
+  apt:
+    name: "{{ item }}"
+    update_cache: true
+    cache_valid_time: 3600
+  with_items: "{{ radius_packages }}"
+
+- name: Copiando modulo ldap
+  copy:
+    src: "files/ldap"
+    dest: "/etc/freeradius/3.0/mods-enabled/ldap"
+
+- name: Creando carpeta para backups de los sitios por default
+  file:
+    path: "{{ home }}/backup_radius"
+    state: directory
+    mode: '0644'
+
+- name: Backupeando los sitios por default
+  copy:
+    src: "{{ item }}"
+    dest: "{{ home }}/backup_radius"
+    owner: "{{ usuario }}"
+    group: "{{ usuario }}"
+    mode: '0644'
+    remote_src: true
+  loop:
+    - /etc/freeradius/3.0/sites-enabled/default
+    - /etc/freeradius/3.0/sites-enabled/inner-tunnel
+
+- name: Borrando sitios por default + fix eap
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/freeradius/3.0/sites-enabled/default
+    - /etc/freeradius/3.0/sites-enabled/inner-tunnel
+    - /etc/freeradius/3.0/mods-enabled/eap
+
+- name: Copiando archivos con configuracion sobre autenticacion + autorizacion
+  copy:
+    src: "{{ item.origen }}"
+    dest: "{{ item.destino }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - { origen: 'ldap_cultura', destino: '/etc/freeradius/3.0/sites-enabled/' }
+    - { origen: 'clients.conf', destino: '/etc/freeradius/3.0/clients.conf' }
+  notify: activar_servicio
+

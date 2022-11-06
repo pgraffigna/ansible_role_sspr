@@ -1,0 +1,6 @@
+---
+- name: activar_servicio
+  systemd:
+    name: freeradius
+    state: restarted
+    enabled: yes

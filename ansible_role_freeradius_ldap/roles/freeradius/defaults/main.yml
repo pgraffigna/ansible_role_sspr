@@ -1,0 +1,2 @@
+---
+radius_packages: [ 'freeradius', 'freeradius-utils', 'freeradius-ldap' ]

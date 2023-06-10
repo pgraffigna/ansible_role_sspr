@@ -1,49 +1,51 @@
 ---
-- include_vars: ../../vars_main.yml
+- name: Incluye el archivo con las variables
+  ansible.builtin.include_vars:
+    file: vars_main.yml
 
 - name: Instalacion de dependencias
-  apt:
+  ansible.builtin.apt:
     name: "{{ item }}"
     update_cache: true
     cache_valid_time: 3600
-  with_items: "{{ sspr_deps }}"
+  with_items: "{{ sspr_packages }}"
 
 - name: Importar llave
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project
     state: present
 
 - name: Agregar repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb [arch=amd64] https://ltb-project.org/debian/stable stable main
     state: present
     update_cache: true
 
 - name: Instalacion de aplicacion SSPR
-  apt:
+  ansible.builtin.apt:
     name: [ 'self-service-password' ]
 
 - name: copiando archivos de configuracion
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.origen }}"
     dest: "{{ item.destino }}"
     owner: root
     group: root
     mode: 0775
-    backup: yes
+    backup: true
   with_items:
     - { origen: 'self-service-password.conf', destino: '/etc/apache2/sites-available/' }
     - { origen: 'config.inc.local.php', destino: '/usr/share/self-service-password/conf/' }
     - { origen: 'logo.png', destino: '/usr/share/self-service-password/htdocs/images/' }
 
 - name: Generando llave openSSL
-  openssl_privatekey:
+  ansible.builtin.openssl_privatekey:
     path: "/etc/ssl/private/{{ server_hostname }}.key"
     size: "{{ key_size }}"
     type: "{{ key_type }}"
 
 - name: Generando CSR
-  openssl_csr:
+  ansible.builtin.openssl_csr:
     path: "/etc/ssl/private/{{ server_hostname }}.csr"
     privatekey_path: "/etc/ssl/private/{{ server_hostname }}.key"
     country_name: "{{ country_name }}"
@@ -52,19 +54,19 @@
     common_name: "{{ server_hostname }}"
 
 - name: Generando certificado autofirmando con openSSL
-  openssl_certificate:
+  ansible.builtin.openssl_certificate:
     path: "/etc/ssl/certs/{{ server_hostname }}.crt"
     privatekey_path: "/etc/ssl/private/{{ server_hostname }}.key"
     csr_path: "/etc/ssl/private/{{ server_hostname }}.csr"
     provider: selfsigned
 
 - name: Activando UFW
-  ufw:
+  ansible.builtin.ufw:
     state: enabled
-    logging: on
+    logging: true
 
 - name: Abriendo puertos HTTPS + SSH
-  ufw:
+  ansible.builtin.ufw:
     rule: allow
     port: "{{ item }}"
     proto: tcp
@@ -73,9 +75,9 @@
     - "{{ https | int }}"
 
 - name: Activando el sitio
-  command: "/usr/sbin/a2ensite {{ sitio_conf }}"
+  ansible.builtin.command: "/usr/sbin/a2ensite {{ sitio_conf }}"
 
 - name: Instalar modulo SSL
-  command: "/usr/sbin/a2enmod ssl"
+  ansible.builtin.command: "/usr/sbin/a2enmod ssl"
   notify: servicios_apache
 

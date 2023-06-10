@@ -4,7 +4,7 @@ sitio_conf: self-service-password.conf
 https: 443
 ssh: 22
 
-### variables para el certificado
+### certificado
 server_hostname: sspr.cultura.lab
 key_size: 2048
 key_type: RSA

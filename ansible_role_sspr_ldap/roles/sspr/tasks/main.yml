@@ -12,12 +12,12 @@
 
 - name: Importar llave
   ansible.builtin.apt_key:
-    url: https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project
+    url: "{{ sspr_key }}"
     state: present
 
 - name: Agregar repo
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64] https://ltb-project.org/debian/stable stable main
+    repo: "deb [arch=amd64] {{ sspr_repo }} stable main"
     state: present
     update_cache: true
 
@@ -26,17 +26,27 @@
     name: [ 'self-service-password' ]
 
 - name: copiando archivos de configuracion
+  ansible.builtin.template:
+    src: "{{ item.origen }}"
+    dest: "{{ item.destino }}"
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  with_items:
+    - { origen: 'files/self-service-password.conf.j2', destino: '/etc/apache2/sites-available/{{ sitio_conf }}' }
+    - { origen: 'files/config.inc.local.php.j2', destino: '/usr/share/self-service-password/conf/{{ app_conf }}' }
+
+- name: copiando archivos
   ansible.builtin.copy:
     src: "{{ item.origen }}"
     dest: "{{ item.destino }}"
     owner: root
     group: root
-    mode: 0775
+    mode: 0644
     backup: true
   with_items:
-    - { origen: 'self-service-password.conf', destino: '/etc/apache2/sites-available/' }
-    - { origen: 'config.inc.local.php', destino: '/usr/share/self-service-password/conf/' }
-    - { origen: 'logo.png', destino: '/usr/share/self-service-password/htdocs/images/' }
+    - { origen: 'files/logo.png', destino: '/usr/share/self-service-password/htdocs/images/logo.png' }
 
 - name: Generando llave openSSL
   ansible.builtin.openssl_privatekey:
@@ -60,6 +70,20 @@
     csr_path: "/etc/ssl/private/{{ server_hostname }}.csr"
     provider: selfsigned
 
+- name: Eliminando index.html
+  ansible.builtin.file:
+    path: /var/www/html/index.html
+    state: absent
+
+- name: Activa Apache mods
+  ansible.builtin.apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items: "{{ apache_mods }}"
+
+- name: Desactivando sitio por default 
+  ansible.builtin.command: a2dissite 000-default
+
 - name: Activando UFW
   ansible.builtin.ufw:
     state: enabled
@@ -73,11 +97,9 @@
   with_items:
     - "{{ ssh | int }}"
     - "{{ https | int }}"
+    - "{{ http | int }}"
 
 - name: Activando el sitio
-  ansible.builtin.command: "/usr/sbin/a2ensite {{ sitio_conf }}"
-
-- name: Instalar modulo SSL
-  ansible.builtin.command: "/usr/sbin/a2enmod ssl"
+  ansible.builtin.command: /usr/sbin/a2ensite {{ sitio_conf }}
   notify: servicios_apache
 

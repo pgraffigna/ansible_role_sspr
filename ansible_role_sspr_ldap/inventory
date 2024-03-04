@@ -1,5 +1,5 @@
 [cliente]
-192.168.121.241
+192.168.121.81
 
 [cliente:vars]
 ansible_user=vagrant

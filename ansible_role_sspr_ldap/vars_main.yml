@@ -1,0 +1,23 @@
+---
+# sspr
+sitio_conf: self-service-password.conf
+app_conf: config.inc.local.php
+https: 443
+http: 80
+ssh: 22
+sspr_key: "https://ltb-project.org/wiki/lib/RPM-GPG-KEY-LTB-project"
+sspr_repo: "https://ltb-project.org/debian/stable"
+
+# certificado
+server_hostname: sspr.home.local
+key_size: 2048
+key_type: RSA
+country_name: AR
+email_admins: administradores@home.local
+organization_name: home
+
+# config.inc vars
+ldap_url: 192.168.121.81
+ldap_binddn: cn=admin,dc=home,dc=local
+ldap_bindpw: testing123
+ldap_base: dc=home,dc=local

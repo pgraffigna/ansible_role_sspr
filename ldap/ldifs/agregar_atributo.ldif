@@ -1,8 +1,6 @@
-## agregar via PHP-MY-ADMIN atributo st en DIT
-# agregar atributo ST con valor MNBA_BUCKET a usuario existente
-
-dn: uid=ttesting,ou=COLLECTIVE,dc=cultura,dc=lab
+# agregar atributo "st" con valor "bucket" a usuario "testing"
+dn: uid=testing,ou=COLLECTIVE,dc=home,dc=local
 changetype: modify
 add: st
-st: mnba_bucket
+st: bucket
 
